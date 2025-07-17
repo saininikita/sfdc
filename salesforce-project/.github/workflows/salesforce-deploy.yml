@@ -1,0 +1,43 @@
+name: Salesforce Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
+      SF_USERNAME: ${{ secrets.SF_USERNAME }}
+      SF_SERVER_KEY: ${{ secrets.SF_SERVER_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+
+      - name: Install Salesforce CLI
+        run: npm install --global sfdx-cli@latest
+
+      - name: Verify Salesforce CLI installation
+        run: |
+          sfdx --version
+          sfdx plugins --core
+
+      - name: Authenticate to Salesforce
+        run: |
+          echo "${SF_SERVER_KEY}" > server.key
+          sfdx auth jwt grant --clientid "${SF_CLIENT_ID}" --jwtkeyfile server.key --username "${SF_USERNAME}" --instanceurl https://login.salesforce.com
+
+      - name: Convert source to metadata format
+        run: sfdx force:source:convert -d deploy
+
+      - name: Deploy to Salesforce org
+        run: sfdx force:mdapi:deploy -d deploy -u "${SF_USERNAME}" -w 10
