@@ -38,6 +38,5 @@ jobs:
 
       - name: Convert source to metadata format
         run: sfdx force:source:convert -d deploy
-
       - name: Deploy to Salesforce org
         run: sfdx force:mdapi:deploy -d deploy -u "${SF_USERNAME}" -w 10
