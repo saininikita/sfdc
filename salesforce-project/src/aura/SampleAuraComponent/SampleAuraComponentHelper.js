@@ -1,0 +1,1 @@
+// This file contains helper functions for the Aura component SampleAuraComponent. It provides reusable logic for the component.

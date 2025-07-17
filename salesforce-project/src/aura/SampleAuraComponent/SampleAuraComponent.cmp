@@ -1,0 +1,6 @@
+<aura:component>
+    <aura:attribute name="sampleAttribute" type="String" default="Hello, World!" />
+    <div>
+        <h1>{!v.sampleAttribute}</h1>
+    </div>
+</aura:component>
